@@ -202,19 +202,9 @@
                 <div class="stat-label">Currently Watching</div>
                 <div class="stat-value" id="modalLiveCount">0</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-label">Total Visitors</div>
-                <div class="stat-value" id="modalTotalCount">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Songs Played</div>
-                <div class="stat-value" id="modalPlayCount">0</div>
-            </div>
             <div class="stat-item" style="text-align:center;padding:20px 0 0 0;">
                 <div class="stat-label">এবারের পূজা হোক আরও আনন্দময়! 🎉</div>
-                <div class="stat-label">চলছে ১০% - ১৫% ছাড় ! <br>
-                
-                <br></div>
+                <div class="stat-label">চলছে ১০% - ১৫% ছাড় ! <br><br></div>
             </div>
         </div>
     </div>
@@ -292,13 +282,10 @@
         const fbLogo = document.getElementById('fbLogo');
         const liveViewerCountEl = document.getElementById('liveViewerCount');
         const modalLiveCount = document.getElementById('modalLiveCount');
-        const modalTotalCount = document.getElementById('modalTotalCount');
-        const modalPlayCount = document.getElementById('modalPlayCount');
         const statsModal = document.getElementById('statsModal');
         const closeStatsModal = document.getElementById('closeStatsModal');
 
         /* ---------- STATS ---------- */
-        let totalVisitors = 0, songsPlayed = 0;
         function getLiveViewers(){
             const h = new Date().getHours();
             if(h>=6&&h<12)return Math.floor(Math.random()*10)+1;
@@ -309,11 +296,8 @@
         }
         function updateStats(){
             const live = getLiveViewers();
-            totalVisitors += live;
             liveViewerCountEl.textContent = live;
             modalLiveCount.textContent = live;
-            modalTotalCount.textContent = totalVisitors;
-            modalPlayCount.textContent = songsPlayed;
         }
 
         /* ---------- AUDIO ---------- */
@@ -323,7 +307,6 @@
                 audio.play().then(()=>{
                     playIcon.className = 'fa-solid fa-pause';
                     playBtn.classList.add('playing');
-                    songsPlayed++;
                     updateStats();
                 }).catch(()=>playIcon.className = 'fa-solid fa-times');
             }else{
@@ -428,5 +411,4 @@
         },false);
     </script>
 </body>
-
 </html>
