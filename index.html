@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>QUADRes Greetings</title>
+    <title>My Brand - Mobile Music Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Google tag (gtag.js) -->
@@ -172,34 +172,69 @@
         }
         .live-viewer-icon{color:#FFA200;font-size:16px}
         .live-viewer-number{font-size:16px;color:#D0BCFF;font-weight:bold;font-family:Roboto Mono,monospace}
-        @media(max-width:400px){.live-viewer-counter{top:16px;right:16px;padding:6px 12px}.live-viewer-number{font-size:14px}}
 
-        /* ---------- STATS MODAL ---------- */
-        .stats-modal{
+        /* ---------- GIFT BUTTON ---------- */
+        .gift-button{
+            position:absolute;top:20px;left:20px;z-index:3;
+            background:rgba(230,224,233,.12);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+            border:1px solid rgba(208,188,255,.2);border-radius:20px;padding:8px 16px;
+            box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;gap:8px;cursor:pointer;
+        }
+        .gift-icon{color:#FF6BAC;font-size:16px}
+
+        @media(max-width:400px){
+            .live-viewer-counter, .gift-button{top:16px;padding:6px 12px}
+            .live-viewer-number{font-size:14px}
+        }
+
+        /* ---------- MODALS ---------- */
+        .stats-modal, .gift-modal{
             display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;
             justify-content:center;align-items:center;padding:20px;
         }
-        .stats-content{
+        .stats-content, .gift-content{
             background:#1C1B1F;border-radius:24px;padding:30px;width:90%;max-width:400px;
             box-shadow:0 10px 30px rgba(0,0,0,.5);border:1px solid rgba(208,188,255,.2);
             animation:modalFadeIn .3s ease;
         }
         @keyframes modalFadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-        .stats-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-        .stats-title{font-size:20px;font-weight:600;color:#D0BCFF}
+        .stats-header, .gift-header{
+            display:flex;justify-content:space-between;align-items:center;margin-bottom:24px
+        }
+        .stats-title, .gift-title{
+            font-size:20px;font-weight:600;color:#D0BCFF
+        }
         .close-btn{background:none;border:none;color:#CAC4D0;font-size:24px;cursor:pointer}
-        .stat-item{background:rgba(208,188,255,.08);border-radius:16px;padding:16px;margin-bottom:16px;text-align:left}
-        .stat-label{font-size:14px;color:#CAC4D0;margin-bottom:6px}
-        .stat-value{font-size:24px;font-weight:bold;color:#D0BCFF;font-family:Roboto Mono,monospace}
+        .stat-item, .gift-item{
+            background:rgba(208,188,255,.08);border-radius:16px;padding:16px;margin-bottom:16px;text-align:left
+        }
+        .stat-label, .gift-label{
+            font-size:14px;color:#CAC4D0;margin-bottom:6px
+        }
+        .stat-value, .gift-value{
+            font-size:24px;font-weight:bold;color:#D0BCFF;font-family:Roboto Mono,monospace
+        }
+        .gift-link{
+            display:block;width:100%;padding:12px;margin-top:16px;
+            background:linear-gradient(135deg,#FF6BAC,#FF3E8D);color:white;text-decoration:none;
+            border-radius:12px;font-weight:bold;text-align:center;transition:transform .2s;
+        }
+        .gift-link:hover{transform:scale(1.02)}
         .loading{display:inline-block;width:24px;height:24px;border:3px solid rgba(208,188,255,.3);border-radius:50%;border-top-color:#D0BCFF;animation:spin 1s cubic-bezier(.4,0,.6,1) infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
-    <!-- Live viewer counter -->
+    <!-- Live viewer counter (RIGHT) -->
     <div class="live-viewer-counter" id="liveCounterBtn">
         <i class="fas fa-users live-viewer-icon"></i>
         <div class="live-viewer-number" id="liveViewerCount">0</div>
+    </div>
+
+    <!-- Gift button (LEFT) -->
+    <div class="gift-button" id="giftBtn">
+        <i class="fas fa-gift gift-icon"></i>
+        <div class="gift-text">Get Gift!</div>
     </div>
 
     <!-- Stats modal -->
@@ -216,6 +251,21 @@
             <div class="stat-item" style="text-align:center;padding:20px 0 0 0;">
                 <div class="stat-label">এবারের পূজা হোক আরও আনন্দময়! 🎉</div>
                 <div class="stat-label">চলছে ১০% - ১৫% ছাড় ! <br><br></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gift modal -->
+    <div class="stats-modal gift-modal" id="giftModal">
+        <div class="gift-content">
+            <div class="gift-header">
+                <div class="gift-title">🎁 Special Gift for You!</div>
+                <button class="close-btn" id="closeGiftModal">&times;</button>
+            </div>
+            <div class="gift-item">
+                <div class="gift-label">We have a gift for you! 🎁</div>
+                <div class="gift-label">Please fill up the Google Form below to claim your exclusive Durga Puja offer!</div>
+                <a href="https://example.googleform.com" target="_blank" class="gift-link">👉 Claim Your Gift Now</a>
             </div>
         </div>
     </div>
@@ -296,51 +346,35 @@
         const statsModal = document.getElementById('statsModal');
         const closeStatsModal = document.getElementById('closeStatsModal');
 
+        // GIFT MODAL ELEMENTS
+        const giftBtn = document.getElementById('giftBtn');
+        const giftModal = document.getElementById('giftModal');
+        const closeGiftModal = document.getElementById('closeGiftModal');
+
         /* ---------- STATS ---------- */
         function getLiveViewers(){
             const now = new Date();
             const h = now.getHours();
             const m = now.getMinutes();
-            const totalMinutes = h * 60 + m; // Convert time to minutes since midnight
+            const totalMinutes = h * 60 + m;
 
-            // 2:00 AM – 6:00 AM → 1–3
             if(totalMinutes >= 120 && totalMinutes < 360) return Math.floor(Math.random() * 3) + 1;
-
-            // 6:00 AM – 12:00 PM → 0–7
-            if(totalMinutes >= 360 && totalMinutes < 720) return Math.floor(Math.random() * 8); // 0 to 7
-
-            // 12:00 PM – 4:00 PM → 0–10
-            if(totalMinutes >= 720 && totalMinutes < 960) return Math.floor(Math.random() * 11); // 0 to 10
-
-            // 4:00 PM – 6:30 PM → 7–20
-            if(totalMinutes >= 960 && totalMinutes < 1050) return Math.floor(Math.random() * 14) + 7; // 7 to 20
-
-            // 6:30 PM – 7:30 PM → 15–50
-            if(totalMinutes >= 1050 && totalMinutes < 1110) return Math.floor(Math.random() * 36) + 15; // 15 to 50
-
-            // 8:00 PM – 8:30 PM → 50–90
-            if(totalMinutes >= 1200 && totalMinutes < 1230) return Math.floor(Math.random() * 41) + 50; // 50 to 90
-
-            // 🎆 PEAK: 8:30 PM – 11:30 PM → 100–200
-            if(totalMinutes >= 1230 && totalMinutes < 1350) return Math.floor(Math.random() * 101) + 100; // 100 to 200
-
-            // 11:30 PM – 12:30 AM → 20–50
-            if(totalMinutes >= 1350 || totalMinutes < 30) return Math.floor(Math.random() * 31) + 20; // 20 to 50
-
-            // 12:30 AM – 1:30 AM → 7–15
-            if(totalMinutes >= 30 && totalMinutes < 90) return Math.floor(Math.random() * 9) + 7; // 7 to 15
-
-            // 1:30 AM – 2:00 AM → 1–7
-            if(totalMinutes >= 90 && totalMinutes < 120) return Math.floor(Math.random() * 7) + 1; // 1 to 7
-
-            // Fallback (shouldn't happen, but just in case)
+            if(totalMinutes >= 360 && totalMinutes < 720) return Math.floor(Math.random() * 8);
+            if(totalMinutes >= 720 && totalMinutes < 960) return Math.floor(Math.random() * 11);
+            if(totalMinutes >= 960 && totalMinutes < 1050) return Math.floor(Math.random() * 14) + 7;
+            if(totalMinutes >= 1050 && totalMinutes < 1110) return Math.floor(Math.random() * 36) + 15;
+            if(totalMinutes >= 1200 && totalMinutes < 1230) return Math.floor(Math.random() * 41) + 50;
+            if(totalMinutes >= 1230 && totalMinutes < 1350) return Math.floor(Math.random() * 101) + 100;
+            if(totalMinutes >= 1350 || totalMinutes < 30) return Math.floor(Math.random() * 31) + 20;
+            if(totalMinutes >= 30 && totalMinutes < 90) return Math.floor(Math.random() * 9) + 7;
+            if(totalMinutes >= 90 && totalMinutes < 120) return Math.floor(Math.random() * 7) + 1;
             return 1;
         }
 
         function updateStats(){
             const now = new Date();
             const totalMinutes = now.getHours() * 60 + now.getMinutes();
-            const isPeak = totalMinutes >= 1230 && totalMinutes < 1350; // 8:30 PM - 11:30 PM
+            const isPeak = totalMinutes >= 1230 && totalMinutes < 1350;
 
             const live = getLiveViewers();
             liveViewerCountEl.textContent = live + (isPeak ? ' 🎆' : '');
@@ -430,10 +464,15 @@
         }
         createParticles();
 
-        /* ---------- MODAL ---------- */
+        /* ---------- MODALS ---------- */
         liveViewerCountEl.addEventListener('click',()=>statsModal.style.display='flex');
         closeStatsModal.addEventListener('click',()=>statsModal.style.display='none');
         statsModal.addEventListener('click',e=>{if(e.target===statsModal)statsModal.style.display='none';});
+
+        // GIFT MODAL HANDLERS
+        giftBtn.addEventListener('click',()=>giftModal.style.display='flex');
+        closeGiftModal.addEventListener('click',()=>giftModal.style.display='none');
+        giftModal.addEventListener('click',e=>{if(e.target===giftModal)giftModal.style.display='none';});
 
         /* ---------- INIT ---------- */
         window.addEventListener('load',()=>{
@@ -459,4 +498,3 @@
     </script>
 </body>
 </html>
-
