@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>My Brand - Mobile Music Player</title>
+    <title>QUADRes Greetings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ---------- RESET & BASE ---------- */
@@ -195,7 +195,7 @@
     <div class="stats-modal" id="statsModal">
         <div class="stats-content">
             <div class="stats-header">
-                <div class="stats-title">📊 শুভ দুর্গা পূজা</div>
+                <div class="stats-title">✨ শুভ দুর্গা পূজা ✨</div>
                 <button class="close-btn" id="closeStatsModal">&times;</button>
             </div>
             <div class="stat-item">
@@ -287,17 +287,53 @@
 
         /* ---------- STATS ---------- */
         function getLiveViewers(){
-            const h = new Date().getHours();
-            if(h>=6&&h<12)return Math.floor(Math.random()*10)+1;
-            if(h>=12&&h<17)return Math.floor(Math.random()*6)+10;
-            if(h>=18&&h<19.5)return Math.floor(Math.random()*6)+20;
-            if(h>=19.5&&h<24)return Math.floor(Math.random()*100)+1;
-            return Math.floor(Math.random()*5)+1;
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            const totalMinutes = h * 60 + m; // Convert time to minutes since midnight
+
+            // 2:00 AM – 6:00 AM → 1–3
+            if(totalMinutes >= 120 && totalMinutes < 360) return Math.floor(Math.random() * 3) + 1;
+
+            // 6:00 AM – 12:00 PM → 0–7
+            if(totalMinutes >= 360 && totalMinutes < 720) return Math.floor(Math.random() * 8); // 0 to 7
+
+            // 12:00 PM – 4:00 PM → 0–10
+            if(totalMinutes >= 720 && totalMinutes < 960) return Math.floor(Math.random() * 11); // 0 to 10
+
+            // 4:00 PM – 6:30 PM → 7–20
+            if(totalMinutes >= 960 && totalMinutes < 1050) return Math.floor(Math.random() * 14) + 7; // 7 to 20
+
+            // 6:30 PM – 7:30 PM → 15–50
+            if(totalMinutes >= 1050 && totalMinutes < 1110) return Math.floor(Math.random() * 36) + 15; // 15 to 50
+
+            // 8:00 PM – 8:30 PM → 50–90
+            if(totalMinutes >= 1200 && totalMinutes < 1230) return Math.floor(Math.random() * 41) + 50; // 50 to 90
+
+            // 🎆 PEAK: 8:30 PM – 11:30 PM → 100–200
+            if(totalMinutes >= 1230 && totalMinutes < 1350) return Math.floor(Math.random() * 101) + 100; // 100 to 200
+
+            // 11:30 PM – 12:30 AM → 20–50
+            if(totalMinutes >= 1350 || totalMinutes < 30) return Math.floor(Math.random() * 31) + 20; // 20 to 50
+
+            // 12:30 AM – 1:30 AM → 7–15
+            if(totalMinutes >= 30 && totalMinutes < 90) return Math.floor(Math.random() * 9) + 7; // 7 to 15
+
+            // 1:30 AM – 2:00 AM → 1–7
+            if(totalMinutes >= 90 && totalMinutes < 120) return Math.floor(Math.random() * 7) + 1; // 1 to 7
+
+            // Fallback (shouldn't happen, but just in case)
+            return 1;
         }
+
         function updateStats(){
+            const now = new Date();
+            const totalMinutes = now.getHours() * 60 + now.getMinutes();
+            const isPeak = totalMinutes >= 1230 && totalMinutes < 1350; // 8:30 PM - 11:30 PM
+
             const live = getLiveViewers();
-            liveViewerCountEl.textContent = live;
-            modalLiveCount.textContent = live;
+            liveViewerCountEl.textContent = live + (isPeak ? ' 🎆' : '');
+            modalLiveCount.textContent = live + (isPeak ? ' 🎆' : '');
         }
 
         /* ---------- AUDIO ---------- */
